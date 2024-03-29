@@ -1,13 +1,21 @@
 import cv2
 
-# Сопоставление ключевых точек с использованием выбранного метода
-def match_keypoints(descriptors1, descriptors2, method='BruteForce'):
-    matcher_methods = {
-        'BruteForce': cv2.BFMatcher(cv2.NORM_L2, crossCheck=True),
-        'FLANN': cv2.FlannBasedMatcher(dict(algorithm=1, trees=5), dict(checks=50))
+def match_keypoints(descriptors1, descriptors2, method='Brute-Force'):
+    # Инициализация объекта сопоставления ключевых точек
+    matchers = {
+        'Brute-Force': cv2.BFMatcher(),
+        'K-D Tree': cv2.FlannBasedMatcher()
     }
-    matcher = matcher_methods.get(method, None)
-    if matcher is None:
-        raise ValueError("Unknown method")
-    matches = matcher.match(descriptors1, descriptors2)
-    return matches
+
+    matcher = matchers[method]
+
+    # Сопоставление дескрипторов между изображениями
+    matches = matcher.knnMatch(descriptors1, descriptors2, k=2)
+
+    # Применение порога для отбора лучших сопоставлений
+    good_matches = []
+    for m, n in matches:
+        if m.distance < 0.75 * n.distance:
+            good_matches.append(m)
+
+    return good_matches

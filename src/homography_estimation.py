@@ -1,15 +1,19 @@
 import cv2
-import numpy as np
 
-# Оценка гомографии с использованием выбранного метода
-def estimate_homography(keypoints1, keypoints2, matches, method='RANSAC'):
+def estimate_homography(keypoints1, keypoints2, method='RANSAC'):
+    # Извлечение координат ключевых точек
+    points1 = [keypoint.pt for keypoint in keypoints1]
+    points2 = [keypoint.pt for keypoint in keypoints2]
+
+    # Оценка гомографии
     methods = {
+        'DLT': 0,
         'RANSAC': cv2.RANSAC,
+        'LSQ': 0
     }
-    method_value = methods.get(method, None)
-    if method_value is None:
-        raise ValueError("Unknown method")
-    src_pts = np.float32([keypoints1[m.queryIdx].pt for m in matches]).reshape(-1, 1, 2)
-    dst_pts = np.float32([keypoints2[m.trainIdx].pt for m in matches]).reshape(-1, 1, 2)
-    homography, mask = cv2.findHomography(src_pts, dst_pts, method_value, 5.0)
+
+    method_value = methods[method]
+
+    homography, _ = cv2.findHomography(points1, points2, method_value)
+
     return homography
