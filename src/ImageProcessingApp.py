@@ -1,6 +1,8 @@
 import tkinter as tk
-from tkinter import filedialog, ttk
+from tkinter import filedialog
 from PIL import Image, ImageTk
+import matplotlib.pyplot as plt
+from PanoramaBuilder import PanoramaBuilder
 
 class ImageProcessingApp:
     def __init__(self, root):
@@ -17,7 +19,7 @@ class ImageProcessingApp:
         # Обнаружение ключевых точек
         self.feature_detection_label = tk.Label(self.algorithm_frame, text="Обнаружение ключевых точек:")
         self.feature_detection_label.grid(row=0, column=0, sticky="w")
-        self.feature_detection_options = ["SIFT", "SURF", "ORB"]
+        self.feature_detection_options = ["SIFT", "ORB"]
         self.feature_detection_var = tk.StringVar()
         self.feature_detection_var.set(self.feature_detection_options[0])  # значение по умолчанию
         self.feature_detection_dropdown = tk.OptionMenu(self.algorithm_frame, self.feature_detection_var, *self.feature_detection_options)
@@ -84,10 +86,10 @@ class ImageProcessingApp:
 
     def select_images(self):
         # Функция для выбора и отображения изображений
-        file_paths = filedialog.askopenfilenames(title="Выберите изображения", filetypes=(("Изображения", "*.png;*.jpg;*.jpeg"),))
-        if file_paths:
+        self.selected_image_paths = filedialog.askopenfilenames(title="Выберите изображения", filetypes=(("Изображения", "*.png;*.jpg;*.jpeg"),))
+        if self.selected_image_paths:
             self.selected_images = []
-            for i, file_path in enumerate(file_paths[:4]):  # ограничиваем выбор до 4 изображений
+            for i, file_path in enumerate(self.selected_image_paths[:4]):  # ограничиваем выбор до 4 изображений
                 image = Image.open(file_path)
                 image.thumbnail((200, 200))  # уменьшаем изображение для отображения
                 photo = ImageTk.PhotoImage(image)
@@ -106,8 +108,22 @@ class ImageProcessingApp:
 
     def process_images(self):
         # Функция для запуска склейки изображений
-        # Код для склейки изображений с использованием выбранных алгоритмов
-        pass
+        if len(self.selected_image_paths) < 2:
+            return  # Не хватает изображений для склейки
+
+        # Создание экземпляра класса PanoramaBuilder с выбранными алгоритмами
+        panorama_builder = PanoramaBuilder(image_paths=self.selected_image_paths, 
+                                           feature_detector=self.feature_detection_var.get(),
+                                           feature_matcher=self.feature_matching_var.get(),
+                                           homography_estimator=self.homography_var.get(),
+                                           image_blender=self.blending_var.get())
+        panorama = panorama_builder.build_panorama()
+
+        # Вывод результата
+        plt.imshow(panorama)
+        plt.axis('off')
+        plt.show()
+
 
 def main():
     root = tk.Tk()
