@@ -19,7 +19,7 @@ class ImageProcessingApp:
         # Обнаружение ключевых точек
         self.feature_detection_label = tk.Label(self.algorithm_frame, text="Обнаружение ключевых точек:")
         self.feature_detection_label.grid(row=0, column=0, sticky="w")
-        self.feature_detection_options = ["SIFT", "ORB"]
+        self.feature_detection_options = ["SIFT", "ORB", "Brisk"]
         self.feature_detection_var = tk.StringVar()
         self.feature_detection_var.set(self.feature_detection_options[0])  # значение по умолчанию
         self.feature_detection_dropdown = tk.OptionMenu(self.algorithm_frame, self.feature_detection_var, *self.feature_detection_options)
@@ -37,20 +37,11 @@ class ImageProcessingApp:
         # Оценка гомографии
         self.homography_label = tk.Label(self.algorithm_frame, text="Оценка гомографии:")
         self.homography_label.grid(row=2, column=0, sticky="w")
-        self.homography_options = ["Прямое линейное преобразование (DLT)", "Нормализованное DLT", "RANSAC", "Метод наименьших квадратов"]
+        self.homography_options = ["RANSAC", "Метод наименьших квадратов"]
         self.homography_var = tk.StringVar()
         self.homography_var.set(self.homography_options[0])  # значение по умолчанию
         self.homography_dropdown = tk.OptionMenu(self.algorithm_frame, self.homography_var, *self.homography_options)
         self.homography_dropdown.grid(row=2, column=1, sticky="w")
-
-        # Смешивание изображений
-        self.blending_label = tk.Label(self.algorithm_frame, text="Смешивание изображений:")
-        self.blending_label.grid(row=3, column=0, sticky="w")
-        self.blending_options = ["Смешивание с растушевкой", "Лапласианное смешивание", "Многополосное смешивание", "Пуассоновское смешивание", "Смешивание с учетом содержимого"]
-        self.blending_var = tk.StringVar()
-        self.blending_var.set(self.blending_options[0])  # значение по умолчанию
-        self.blending_dropdown = tk.OptionMenu(self.algorithm_frame, self.blending_var, *self.blending_options)
-        self.blending_dropdown.grid(row=3, column=1, sticky="w")
 
         # Фрейм для отображения выбранных изображений с возможностью прокрутки
         self.image_frame = tk.Frame(self.root)
@@ -88,6 +79,9 @@ class ImageProcessingApp:
         # Функция для выбора и отображения изображений
         self.selected_image_paths = filedialog.askopenfilenames(title="Выберите изображения", filetypes=(("Изображения", "*.png;*.jpg;*.jpeg"),))
         if self.selected_image_paths:
+            # Очищаем холст перед добавлением новых изображений
+            self.image_canvas.delete("all")
+            self.selected_images = []
             self.selected_images = []
             for i, file_path in enumerate(self.selected_image_paths[:4]):  # ограничиваем выбор до 4 изображений
                 image = Image.open(file_path)
@@ -115,8 +109,7 @@ class ImageProcessingApp:
         panorama_builder = PanoramaBuilder(image_paths=self.selected_image_paths, 
                                            feature_detector=self.feature_detection_var.get(),
                                            feature_matcher=self.feature_matching_var.get(),
-                                           homography_estimator=self.homography_var.get(),
-                                           image_blender=self.blending_var.get())
+                                           homography_estimator=self.homography_var.get())
         panorama = panorama_builder.build_panorama()
 
         # Вывод результата
