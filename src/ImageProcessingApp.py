@@ -28,7 +28,7 @@ class ImageProcessingApp:
         # Сопоставление ключевых точек
         self.feature_matching_label = tk.Label(self.algorithm_frame, text="Сопоставление ключевых точек:")
         self.feature_matching_label.grid(row=1, column=0, sticky="w")
-        self.feature_matching_options = ["Brute-Force", "K-D-tree"]
+        self.feature_matching_options = ["Brute-Force", "FLANN"]
         self.feature_matching_var = tk.StringVar()
         self.feature_matching_var.set(self.feature_matching_options[0])  # значение по умолчанию
         self.feature_matching_dropdown = tk.OptionMenu(self.algorithm_frame, self.feature_matching_var, *self.feature_matching_options)
@@ -37,7 +37,7 @@ class ImageProcessingApp:
         # Оценка гомографии
         self.homography_label = tk.Label(self.algorithm_frame, text="Оценка гомографии:")
         self.homography_label.grid(row=2, column=0, sticky="w")
-        self.homography_options = ["RANSAC", "Метод наименьших квадратов"]
+        self.homography_options = ["RANSAC", "LMEDS"]
         self.homography_var = tk.StringVar()
         self.homography_var.set(self.homography_options[0])  # значение по умолчанию
         self.homography_dropdown = tk.OptionMenu(self.algorithm_frame, self.homography_var, *self.homography_options)
