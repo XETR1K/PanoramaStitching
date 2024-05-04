@@ -19,7 +19,7 @@ class ImageProcessingApp:
         # Обнаружение ключевых точек
         self.feature_detection_label = tk.Label(self.algorithm_frame, text="Обнаружение ключевых точек:")
         self.feature_detection_label.grid(row=0, column=0, sticky="w")
-        self.feature_detection_options = ["SIFT", "ORB", "Brisk"]
+        self.feature_detection_options = ["SIFT", "ORB", "Brisk", "AKAZE"]
         self.feature_detection_var = tk.StringVar()
         self.feature_detection_var.set(self.feature_detection_options[0])  # значение по умолчанию
         self.feature_detection_dropdown = tk.OptionMenu(self.algorithm_frame, self.feature_detection_var, *self.feature_detection_options)
