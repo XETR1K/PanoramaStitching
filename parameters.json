@@ -1,0 +1,10 @@
+{
+    "features_find_method": "orb",
+    "warp_method": "plane",
+    "seam_find_method": "gc_color",
+    "blend_method": "feather",
+    "exposure_comp_method": "no",
+    "wave_correct_method": "horiz",
+    "match_conf": 0.3,
+    "blend_strength": 3
+}
